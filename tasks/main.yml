@@ -1,0 +1,23 @@
+---
+# tasks file for custom-cis
+
+- name: Include tasks
+  include_tasks:
+    with_first_found:
+      - "{{ ansible_distribution }}"
+      - default.yml
+
+
+- name: CIS 6.2.6
+  lineinfile:
+    path: /etc/sudoers
+    regexp: '^(.*)secure_path(.*)$'
+    line: '\1secure_path="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"'
+    backrefs: yes
+
+- name: Workaround for kernel Paramenters
+  lineinfile:
+    path: /etc/rc.local
+    regexp: '^(.*)secure_path(.*)$'
+    line: '/etc/init.d/procps restart'
+    insertbefore: 'exit 0'
